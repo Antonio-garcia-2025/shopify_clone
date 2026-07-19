@@ -1,0 +1,104 @@
+<h1>Shopify - products management</h1>
+
+<!-- Agregamos el enlace de cerrar sesión justo aquí arriba -->
+<div style="text-align: right; margin-bottom: 10px;">
+  Logged in as: <strong><%= current_user.email %></strong> | 
+  <%= button_to "Log out", destroy_user_session_path, method: :delete, style: "background: none; border: none; color: red; text-decoration: underline; cursor: pointer; display: inline; padding: 0;" %>
+</div>
+
+
+
+<hr>
+
+<% if @product.errors.any? %>
+ <div style = "color: red; background-color: #fdd; padding: 10px; border: 1px solid red; margin-bottom: 20px; border-radius: 5px;">
+   <h3> ¡please correct the errors!</h3>
+   <ul>
+    <% @product.errors.full_messages.each do |message| %>
+     <li><%= message %></li>
+    <% end %>
+   </ul>
+</div>
+<% end %>
+
+<hr>
+
+<% if @product.errors.any? %>
+ <div style = "color: red; background-color: #fdd; padding: 10px; border: 1px solid red; margin-bottom: 20px; border-radius: 5px;">
+   <h3> ¡please correct the errors!</h3>
+   <ul>
+    <% @product.errors.full_messages.each do |message| %>
+     <li><%= message %></li>
+    <% end %>
+   </ul>
+</div>
+<% end %>
+
+<h2> Add a new product </h2>
+<%= form_with model: @product, local: true do |f| %>
+    <div>
+    <%= f.label :name, "Product name:" %><br>
+    <%=f.text_field :name %>
+    </div>
+    
+    <br>
+
+    <div>
+        <%= f.label :price, "Price" %><br>
+        <%= f.number_field :price, min: 0, step: 0.01 %>
+    </div>
+
+    <br>
+
+    <%= f.submit "Add product" %>
+<% end %>
+
+<hr>
+
+<h2> Products list </h2>
+<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: left;">
+<thead>
+    <tr style="background-color: #eee;">
+        <!-- Quitamos la cabecera 'Id' que estaba de más para tener 4 columnas exactas -->
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+<tbody>
+    <% @products.select(&:persisted?).each do |product| %>
+      <tr>
+        <!-- 1. Celda del Nombre -->
+        <td><%= product.name %></td>
+        
+        <!-- 2. Celda del Precio -->
+        <td><%= number_to_currency(product.price) %></td>
+        
+        <!-- 3. Celda del Stock -->
+        <td>
+          <% if product.stock > 0 %>
+            <%= product.stock %> items
+          <% else %>
+            <span style="color: red; font-weight: bold;">AGOTADO</span>
+          <% end %>
+        </td>
+        
+        <!-- 4. Celda Independiente para las Acciones -->
+        <td>
+          <div style="display: flex; gap: 10px;">
+            <!-- Botón de Vender -->
+            <% if product.stock > 0 %>
+              <%= button_to "Vender 1", sell_product_path(product), method: :post, style: "color: white; background-color: #28a745; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
+            <% else %>
+              <button disabled style="color: #6c757d; background-color: #e2e3e5; border: none; padding: 5px 10px; border-radius: 3px; cursor: not-allowed;">Sin Stock</button>
+            <% end %>
+
+            <!-- Botón de Borrar -->
+            <%= button_to "delete", product_path(product), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete this product?" } }, style: "color: white; background-color: red; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+</tbody>
+</table>
