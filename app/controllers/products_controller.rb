@@ -4,62 +4,73 @@ class ProductsController < ApplicationController
   def index
     @products = current_user.products
     @product = current_user.products.build
+
+    # Métricas del dashboard (protegidas contra NULL)
+    @total_earnings = current_user.sales.sum(:price) || 0
+    @inventory_value = @products.sum("COALESCE(price, 0) * COALESCE(stock, 0)")
+    @out_of_stock_count = @products.where("COALESCE(stock, 0) = 0").count
   end
 
   def create
-    # 1. Buscamos si ya existe el producto por nombre
     @product = current_user.products.find_by("lower(name) = ?", product_params[:name].downcase)
     
     if @product
-      # 2. Calculamos el nuevo stock sumando el actual y el que viene del formulario
-      new_stock = @product.stock + 1
+      new_stock = (@product.stock || 0) + 1
       
       if @product.update(stock: new_stock, price: product_params[:price])
         redirect_to root_path, notice: "Stock updated successfully!"
       else
-        @products = current_user.products
+        load_dashboard_data
         render :index, status: :unprocessable_entity
       end
     else
-      # 3. Si el producto no existe, creamos uno nuevo
       @product = current_user.products.build(product_params)
-      @product.stock = 1 # Inicializamos el stock en 1 para un nuevo producto
+      @product.stock = 1
       
       if @product.save
         redirect_to root_path, notice: "Product created successfully!"
       else
-        @products = current_user.products
+        load_dashboard_data
         render :index, status: :unprocessable_entity
       end
     end 
-  end # <-- Este cierra el método create
+  end
 
   def sell
     @product = current_user.products.find(params[:id])
     
-    if @product.stock > 0
+    if (@product.stock || 0) > 0
       @product.stock -= 1
 
-      if @product.save
-        redirect_to root_path, notice: "Product sold successfully!"
-      else
-        redirect_to root_path, alert: "Error selling product."
+      ActiveRecord::Base.transaction do
+        @product.save!
+        current_user.sales.create!(product: @product, price: @product.price)
       end
+
+      redirect_to root_path, notice: "Product sold successfully!"
     else   
       redirect_to root_path, alert: "No stock available to sell."
     end
-  end # <-- Este cierra el método sell
+  rescue ActiveRecord::RecordInvalid
+    redirect_to root_path, alert: "Error selling product."
+  end
 
   def destroy
-    # Blindaje de seguridad: Solo busca dentro de los productos del usuario actual
     @product = current_user.products.find(params[:id])
     @product.destroy
     redirect_to root_path, status: :see_other, notice: 'Product was successfully deleted.'
-  end # <-- Este cierra el método destroy
+  end
 
   private
 
   def product_params
     params.require(:product).permit(:name, :price, :stock)
   end 
-end # <-- Este cierra la clase global ProductsController
+
+  def load_dashboard_data
+    @products = current_user.products
+    @total_earnings = current_user.sales.sum(:price) || 0
+    @inventory_value = @products.sum("COALESCE(price, 0) * COALESCE(stock, 0)")
+    @out_of_stock_count = @products.where("COALESCE(stock, 0) = 0").count
+  end
+end
