@@ -123,5 +123,38 @@
         </td>
       </tr>
     <% end %>
+<hr style="margin: 30px 0;">
+
+<!-- SECCIÓN DE HISTORIAL DE VENTAS RECIENTES -->
+<h2>🕒 Últimas Ventas Realizadas</h2>
+
+<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: left; margin-bottom: 30px;">
+  <thead>
+    <tr style="background-color: #e6f4ea;">
+      <th style="width: 40%;">Producto</th>
+      <th style="width: 30%;">Precio de Venta</th>
+      <th style="width: 30%;">Fecha y Hora</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @recent_sales.any? %>
+      <% @recent_sales.each do |sale| %>
+        <tr>
+          <td><strong><%= sale.product&.name || "Producto eliminado" %></strong></td>
+          <td style="color: #137333; font-weight: bold;"><%= number_to_currency(sale.price) %></td>
+          <td style="color: #5f6368; font-size: 0.9em;">
+            <%= sale.created_at.strftime("%d/%m/%Y a las %H:%M hrs") %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="3" style="padding: 15px; text-align: center; color: #6c757d;">
+          Aún no has realizado ninguna venta. ¡Haz clic en "Vender 1" en la tabla de inventario arriba para registrar tu primera transacción!
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 </tbody>
 </table>

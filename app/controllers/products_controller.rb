@@ -9,6 +9,9 @@ class ProductsController < ApplicationController
     @total_earnings = current_user.sales.sum(:price) || 0
     @inventory_value = @products.sum("COALESCE(price, 0) * COALESCE(stock, 0)")
     @out_of_stock_count = @products.where("COALESCE(stock, 0) = 0").count
+
+    #agregamos la ultimas 10 ventas realizadas con carga optimizada de productos 
+    @recent_sales = current_user.sales.includes(:product).order(created_at: :desc).limit(10)
   end
 
   def create
@@ -72,5 +75,6 @@ class ProductsController < ApplicationController
     @total_earnings = current_user.sales.sum(:price) || 0
     @inventory_value = @products.sum("COALESCE(price, 0) * COALESCE(stock, 0)")
     @out_of_stock_count = @products.where("COALESCE(stock, 0) = 0").count
+    @recent_sales = current_user.sales.includes(:product).order(created_at: :desc).limit(10)
   end
 end
