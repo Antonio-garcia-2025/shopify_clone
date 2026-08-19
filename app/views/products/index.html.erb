@@ -1,133 +1,138 @@
-<h1>Shopify - products management</h1>
-
-<!-- DASHBOARD DE MÉTRICAS -->
-<div style="display: flex; gap: 20px; margin: 20px 0;">
-  
-  <!-- Tarjeta 1: Ventas Totales -->
-  <div style="flex: 1; padding: 15px; background-color: #e6f4ea; border: 1px solid #ceead6; border-radius: 8px;">
-    <span style="font-size: 0.9em; color: #137333; font-weight: bold;">Ventas Totales</span>
-    <h2 style="margin: 5px 0 0 0; color: #137333;"><%= number_to_currency(@total_earnings) %></h2>
+<!-- 1. NOTIFICACIONES FLASH -->
+<% flash.each do |type, message| %>
+  <% 
+    bg_color = type.to_s == "notice" ? "#e6f4ea" : "#fce8e6"
+    border_color = type.to_s == "notice" ? "#ceead6" : "#fad2cf"
+    text_color = type.to_s == "notice" ? "#137333" : "#c5221f"
+  %>
+  <div style="padding: 15px; margin-bottom: 20px; background-color: <%= bg_color %>; border: 1px solid <%= border_color %>; color: <%= text_color %>; border-radius: 6px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <span><%= message %></span>
+    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: <%= text_color %>; font-size: 1.3em; cursor: pointer; font-weight: bold; line-height: 1;">&times;</button>
   </div>
+<% end %>
 
-  <!-- Tarjeta 2: Valor en Stock -->
-  <div style="flex: 1; padding: 15px; background-color: #e8f0fe; border: 1px solid #d2e3fc; border-radius: 8px;">
-    <span style="font-size: 0.9em; color: #1a73e8; font-weight: bold;">Valor en Inventario</span>
-    <h2 style="margin: 5px 0 0 0; color: #1a73e8;"><%= number_to_currency(@inventory_value) %></h2>
-  </div>
-
-  <!-- Tarjeta 3: Productos Agotados -->
-  <div style="flex: 1; padding: 15px; background-color: #fce8e6; border: 1px solid #fad2cf; border-radius: 8px;">
-    <span style="font-size: 0.9em; color: #c5221f; font-weight: bold;">Productos Agotados</span>
-    <h2 style="margin: 5px 0 0 0; color: #c5221f;"><%= @out_of_stock_count %></h2>
-  </div>
-
-</div>
-
-<!-- Agregamos el enlace de cerrar sesión justo aquí arriba -->
+<!-- 2. BARRA DE SESIÓN DE USUARIO -->
 <div style="text-align: right; margin-bottom: 10px;">
   Logged in as: <strong><%= current_user.email %></strong> | 
   <%= button_to "Log out", destroy_user_session_path, method: :delete, style: "background: none; border: none; color: red; text-decoration: underline; cursor: pointer; display: inline; padding: 0;" %>
 </div>
 
+<h1>Shopify - products management</h1>
 
+<!-- 3. DASHBOARD DE MÉTRICAS -->
+<div style="display: flex; gap: 20px; margin: 20px 0;">
+  <!-- Tarjeta 1: Ventas Totales -->
+  <div style="flex: 1; padding: 15px; background-color: #e6f4ea; border: 1px solid #ceead6; border-radius: 8px;">
+    <span style="font-size: 0.9em; color: #137333; font-weight: bold;">💰 Ventas Totales</span>
+    <h2 style="margin: 5px 0 0 0; color: #137333;"><%= number_to_currency(@total_earnings) %></h2>
+  </div>
+
+  <!-- Tarjeta 2: Valor en Stock -->
+  <div style="flex: 1; padding: 15px; background-color: #e8f0fe; border: 1px solid #d2e3fc; border-radius: 8px;">
+    <span style="font-size: 0.9em; color: #1a73e8; font-weight: bold;">📦 Valor en Inventario</span>
+    <h2 style="margin: 5px 0 0 0; color: #1a73e8;"><%= number_to_currency(@inventory_value) %></h2>
+  </div>
+
+  <!-- Tarjeta 3: Productos Agotados -->
+  <div style="flex: 1; padding: 15px; background-color: #fce8e6; border: 1px solid #fad2cf; border-radius: 8px;">
+    <span style="font-size: 0.9em; color: #c5221f; font-weight: bold;">⚠️ Productos Agotados</span>
+    <h2 style="margin: 5px 0 0 0; color: #c5221f;"><%= @out_of_stock_count %></h2>
+  </div>
+</div>
 
 <hr>
 
+<!-- 4. MENSAJES DE ERROR DE FORMULARIO -->
 <% if @product.errors.any? %>
- <div style = "color: red; background-color: #fdd; padding: 10px; border: 1px solid red; margin-bottom: 20px; border-radius: 5px;">
-   <h3> ¡please correct the errors!</h3>
-   <ul>
-    <% @product.errors.full_messages.each do |message| %>
-     <li><%= message %></li>
-    <% end %>
-   </ul>
-</div>
+  <div style="color: red; background-color: #fdd; padding: 10px; border: 1px solid red; margin-bottom: 20px; border-radius: 5px;">
+    <h3>¡Please correct the errors!</h3>
+    <ul>
+      <% @product.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
 <% end %>
 
-<hr>
-
-<% if @product.errors.any? %>
- <div style = "color: red; background-color: #fdd; padding: 10px; border: 1px solid red; margin-bottom: 20px; border-radius: 5px;">
-   <h3> ¡please correct the errors!</h3>
-   <ul>
-    <% @product.errors.full_messages.each do |message| %>
-     <li><%= message %></li>
-    <% end %>
-   </ul>
-</div>
-<% end %>
-
-<h2> Add a new product </h2>
+<!-- 5. FORMULARIO: AGREGAR NUEVO PRODUCTO -->
+<h2>Add a new product</h2>
 <%= form_with model: @product, local: true do |f| %>
-    <div>
+  <div>
     <%= f.label :name, "Product name:" %><br>
-    <%=f.text_field :name %>
-    </div>
-    
-    <br>
-
-    <div>
-        <%= f.label :price, "Price" %><br>
-        <%= f.number_field :price, min: 0, step: 0.01 %>
-    </div>
-
-    <br>
-
-    <%= f.submit "Add product" %>
+    <%= f.text_field :name, required: true %>
+  </div>
+  <br>
+  <div>
+    <%= f.label :price, "Price:" %><br>
+    <%= f.number_field :price, min: 0, step: 0.01, required: true %>
+  </div>
+  <br>
+  <%= f.submit "Add product" %>
 <% end %>
 
 <hr>
 
-<h2> Products list </h2>
-<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: left;">
-<thead>
-    <tr style="background-color: #eee;">
-        <!-- Quitamos la cabecera 'Id' que estaba de más para tener 4 columnas exactas -->
-        <th>Name</th>
-        <th>Price</th>
-        <th>Stock</th>
-        <th>Actions</th>
-    </tr>
-</thead>
-<tbody>
-    <% @products.select(&:persisted?).each do |product| %>
-      <tr>
-        <!-- 1. Celda del Nombre -->
-        <td><%= product.name %></td>
-        
-        <!-- 2. Celda del Precio -->
-        <td><%= number_to_currency(product.price) %></td>
-        
-        <!-- 3. Celda del Stock -->
-        <td>
-          <% if product.stock > 0 %>
-            <%= product.stock %> items
-          <% else %>
-            <span style="color: red; font-weight: bold;">AGOTADO</span>
-          <% end %>
-        </td>
-        
-        <!-- 4. Celda Independiente para las Acciones -->
-        <td>
-          <div style="display: flex; gap: 10px;">
-            <!-- Botón de Vender -->
-            <% if product.stock > 0 %>
-              <%= button_to "Vender 1", sell_product_path(product), method: :post, style: "color: white; background-color: #28a745; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
-            <% else %>
-              <button disabled style="color: #6c757d; background-color: #e2e3e5; border: none; padding: 5px 10px; border-radius: 3px; cursor: not-allowed;">Sin Stock</button>
-            <% end %>
+<!-- 6. BARRA DE BÚSQUEDA Y FILTRO -->
+<h2>Products list</h2>
+<div style="margin-bottom: 20px; background-color: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #e9ecef;">
+  <%= form_with url: root_path, method: :get, local: true, style: "display: flex; gap: 10px; align-items: center;" do %>
+    <%= text_field_tag :query, params[:query], placeholder: "Buscar producto por nombre...", style: "flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" %>
+    <%= submit_tag "Buscar", style: "background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;" %>
+    <% if params[:query].present? %>
+      <%= link_to "Limpiar filtro", root_path, style: "color: #6c757d; text-decoration: underline; font-size: 0.9em;" %>
+    <% end %>
+  <% end %>
+</div>
 
-            <!-- Botón de Borrar -->
-            <%= button_to "delete", product_path(product), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete this product?" } }, style: "color: white; background-color: red; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
-          </div>
+<!-- 7. TABLA DE INVENTARIO -->
+<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: left;">
+  <thead>
+    <tr style="background-color: #eee;">
+      <th>Name</th>
+      <th>Price</th>
+      <th>Stock</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @products.select(&:persisted?).any? %>
+      <% @products.select(&:persisted?).each do |product| %>
+        <tr>
+          <td><%= product.name %></td>
+          <td><%= number_to_currency(product.price) %></td>
+          <td>
+            <% if product.stock > 0 %>
+              <%= product.stock %> items
+            <% else %>
+              <span style="color: red; font-weight: bold;">AGOTADO</span>
+            <% end %>
+          </td>
+          <td>
+            <div style="display: flex; gap: 10px;">
+              <% if product.stock > 0 %>
+                <%= button_to "Vender 1", sell_product_path(product), method: :post, style: "color: white; background-color: #28a745; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
+              <% else %>
+                <button disabled style="color: #6c757d; background-color: #e2e3e5; border: none; padding: 5px 10px; border-radius: 3px; cursor: not-allowed;">Sin Stock</button>
+              <% end %>
+              <%= button_to "delete", product_path(product), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete this product?" } }, style: "color: white; background-color: red; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="4" style="padding: 15px; text-align: center; color: #6c757d;">
+          No se encontraron productos en el inventario.
         </td>
       </tr>
     <% end %>
+  </tbody>
+</table>
+
 <hr style="margin: 30px 0;">
 
-<!-- SECCIÓN DE HISTORIAL DE VENTAS RECIENTES -->
+<!-- 8. TABLA DE HISTORIAL DE VENTAS RECIENTES -->
 <h2>🕒 Últimas Ventas Realizadas</h2>
-
 <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: left; margin-bottom: 30px;">
   <thead>
     <tr style="background-color: #e6f4ea;">
@@ -150,11 +155,9 @@
     <% else %>
       <tr>
         <td colspan="3" style="padding: 15px; text-align: center; color: #6c757d;">
-          Aún no has realizado ninguna venta. ¡Haz clic en "Vender 1" en la tabla de inventario arriba para registrar tu primera transacción!
+          Aún no has realizado ninguna venta. ¡Haz clic en "Vender 1" para registrar tu primera transacción!
         </td>
       </tr>
     <% end %>
   </tbody>
-</table>
-</tbody>
 </table>

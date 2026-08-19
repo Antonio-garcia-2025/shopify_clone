@@ -3,12 +3,17 @@ class ProductsController < ApplicationController
 
   def index
     @products = current_user.products
+    if params[:query].present?
+      @product = @products.where("lower(name) = LIKE ?", "%#{params[:query].downcase}%")
+    end
+
     @product = current_user.products.build
 
     # Métricas del dashboard (protegidas contra NULL)
     @total_earnings = current_user.sales.sum(:price) || 0
     @inventory_value = @products.sum("COALESCE(price, 0) * COALESCE(stock, 0)")
-    @out_of_stock_count = @products.where("COALESCE(stock, 0) = 0").count
+    @out_of_stock_count = @products.
+    where("COALESCE(stock, 0) = 0").count
 
     #agregamos la ultimas 10 ventas realizadas con carga optimizada de productos 
     @recent_sales = current_user.sales.includes(:product).order(created_at: :desc).limit(10)
