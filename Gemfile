@@ -67,3 +67,14 @@ end
 
 gem "devise"
 gem "csv"
+gem "pg"
+
+# Para desarrollo local en Windows:
+group :development, :test do
+  gem "sqlite3"
+end
+
+# Para producción en Render:
+group :production do
+  gem "pg"
+end
