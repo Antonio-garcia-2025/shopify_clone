@@ -38,3 +38,6 @@ Aplicación web de control de inventario y ventas desarrollada con **Ruby on Rai
 **Ruby** (>= 3.3.0)
 **Rails** (>= 8.0)
 **Git**
+
+### Render 
+https://shopify-z885.onrender.com/users/sign_in
