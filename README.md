@@ -1,29 +1,86 @@
-# Shopify Clone - Inventory, Sales & Financial Dashboard
+# 🛍️ Shopify — Inventory & Sales Management
 
-Un sistema de gestión de inventarios, simulación de ventas y panel de métricas financieras multi-inquilino (*multi-tenant*) desarrollado con **Ruby on Rails 8**. Cada comerciante cuenta con un entorno seguro y aislado para administrar su stock, procesar transacciones en tiempo real y monitorear el desempeño de su negocio.
+> [Leer en Español](README.es.md)
 
-## Características del Proyecto
+A complete inventory and sales management web application built with **Ruby on Rails 8**. It allows multi-user management, real-time inventory tracking, categorization, stock decrement transactions, metric dashboards, and CSV report exports.
 
-- **Autenticación Segura:** Implementada con Devise para el registro e inicio de sesión de usuarios.
-- **Aislamiento de Datos (Multi-tenancy):** Los comerciantes solo pueden ver, editar y vender sus propios productos y transacciones.
-- **Inventario Inteligente:** Al registrar un producto con un nombre ya existente, el sistema incrementa automáticamente el stock en lugar de duplicar el registro y actualiza el precio al más reciente.
-- **Motor de Ventas Express & Transacciones:** Botón funcional para descontar stock unidad por unidad mediante transacciones atómicas (`ActiveRecord::Base.transaction`), registrando la venta en un modelo independiente (`Sale`).
-- **Dashboard Financiero en Tiempo Real:**
-  -  **Ventas Totales:** Suma acumulada de los ingresos reales por ventas.
-  -  **Valor en Inventario:** Cálculo del capital retenido en stock (`precio * stock`).
-  -  **Productos Agotados:** Alerta visual e indicador numérico de artículos sin existencias.
-- **Seguridad y Resiliencia en Consultas:** Consultas SQL blindadas con `COALESCE` para prevenir errores por datos nulos y restricciones a nivel de controlador (`current_user.products`).
+---
+
+##  Features
+
+**Multi-User Authentication:** Secure user registration, session management, and data isolation powered by `Devise`.
+**Full Product CRUD:** Add, list, edit, and delete products with validations.
+**Category System (1-to-N):** Organize products by user-defined categories.
+**Live Search & Filters:** Filter products instantly by text search and category dropdowns.
+**Stock & Sales Transactions:** Single-click "Sell 1" action with stock verification and atomic transactions.
+ **Business Metrics Dashboard:** Real-time summary cards for:
+ Total earnings from sales.
+ Total monetary value of current inventory.
+ Out-of-stock item counter.
+ **CSV Export:** Download full inventory reports compatible with Microsoft Excel and Google Sheets.
+
+---
+
+##  Tech Stack
+
+ **Backend:** Ruby on Rails 8
+ **Database:** SQLite3
+ **Authentication:** Devise
+ **Data Export:** Ruby Standard Library (`csv`)
+ **Frontend:** ERB, Responsive CSS
+
+---
+
+
+### Prerequisites
+
+Ensure you have the following installed:
+* **Ruby** (>= 3.3.0)
+* **Rails** (>= 8.0)
+* **Git**
+
+
+
+---
+
+
+# 🛍️ Shopify — Gestión de Inventario y Ventas
+
+> [Read in English](README.md)
+
+Aplicación web de control de inventario y ventas desarrollada con **Ruby on Rails 8**. Cuenta con autenticación de usuarios, aislamiento de datos, control de existencias, transacciones de venta, métricas en tiempo real, categorización y exportación de reportes a Excel (CSV).
+
+---
+
+##  Funcionalidades Principales
+
+ **Autenticación Multi-Usuario:** Registro, inicio y cierre de sesión seguro mediante `Devise`, con aislamiento total de datos por usuario.
+ **CRUD Completo de Productos:** Alta, edición, visualización y eliminación de artículos con validación de datos.
+ **Sistema de Categorías (1 a N):** Organización de catálogo por categorías asociadas a cada usuario.
+ **Búsqueda y Filtros Combinados:** Búsqueda en tiempo real por nombre de producto y filtrado por categoría.
+ **Gestión de Stock y Ventas:** Botón "Vender 1" con decremento de existencias y registro histórico mediante transacciones atómicas de base de datos.
+ **Dashboard de Métricas:** Tarjetas informativas con cálculo automático de:
+ Ganancias totales por ventas realizadas.
+ Valor total acumulado en inventario.
+ Contador de artículos agotados (stock en 0).
+ **Exportación a CSV:** Descarga del inventario completo en formato CSV compatible con Microsoft Excel y Google Sheets.
+
+---
 
 ##  Tecnologías Utilizadas
 
-- **Backend:** Ruby on Rails 8.1.3
-- **Base de Datos:** SQLite3
-- **Autenticación:** Devise Gem
-- **Frontend:** HTML5, Embedded Ruby (ERB) y estilos nativos.
+**Backend:** Ruby on Rails 8
+**Base de Datos:** SQLite3
+**Autenticación:** Devise
+**Manejo de Reportes:** Librería estándar `csv` de Ruby
+**Frontend:** Vistas dinámicas con ERB y diseño estructurado
 
-## Instalación y Uso Local
+---
 
-1. Clonar el repositorio.
-2. Instalar las dependencias del proyecto:
-   ```bash
-   bundle install
+##  Instalación y Configuración Local
+
+### Requisitos Previos
+
+**Ruby** (>= 3.3.0)
+**Rails** (>= 8.0)
+**Git**

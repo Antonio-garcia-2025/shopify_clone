@@ -1,0 +1,47 @@
+<div style="max-width: 600px; margin: 30px auto; padding: 25px; border: 1px solid #ddd; border-radius: 8px; background-color: #fafafa; font-family: sans-serif;">
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>Editar Producto</h2>
+    <%= link_to "← Volver al Inventario", root_path, style: "color: #007bff; text-decoration: none; font-weight: bold;" %>
+  </div>
+
+  <% if @product.errors.any? %>
+    <div style="color: red; background-color: #fdd; padding: 10px; border: 1px solid red; margin-bottom: 20px; border-radius: 5px;">
+      <h3>¡Por favor corrige los siguientes errores!</h3>
+      <ul>
+        <% @product.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: @product, local: true do |f| %>
+    <div style="margin-bottom: 15px;">
+    <%= f.label :name, "Nombre del producto:", style: "font-weight: bold;" %><br>
+    <%= f.text_field :name, required: true, style: "width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+    <%= f.label :category_id, "Categoría:", style: "font-weight: bold;" %><br>
+    <%= f.collection_select :category_id, @categories, :id, :name, { prompt: "Selecciona una categoría" }, { style: "width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" } %>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+    <%= f.label :price, "Precio ($):", style: "font-weight: bold;" %><br>
+    <%= f.number_field :price, min: 0, step: 0.01, required: true, style: "width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" %>
+    </div>
+      
+    <div style="margin-bottom: 20px;">
+    <%= f.label :stock, "Cantidad en Stock:", style: "font-weight: bold;" %><br>
+    <%= f.number_field :stock, min: 0, step: 1, required: true, style: "width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" %>
+    </div>
+
+
+    <div style="display: flex; gap: 10px;">
+      <%= f.submit "Guardar Cambios", style: "background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 1em;" %>
+      <%= link_to "Cancelar", root_path, style: "background-color: #6c757d; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-size: 1em;" %>
+    </div>
+  <% end %>
+
+</div>

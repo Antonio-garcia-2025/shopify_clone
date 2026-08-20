@@ -5,48 +5,45 @@
     border_color = type.to_s == "notice" ? "#ceead6" : "#fad2cf"
     text_color = type.to_s == "notice" ? "#137333" : "#c5221f"
   %>
-  <div style="padding: 15px; margin-bottom: 20px; background-color: <%= bg_color %>; border: 1px solid <%= border_color %>; color: <%= text_color %>; border-radius: 6px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+  <div style="padding: 12px 15px; margin-bottom: 20px; background-color: <%= bg_color %>; border: 1px solid <%= border_color %>; color: <%= text_color %>; border-radius: 6px; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
     <span><%= message %></span>
-    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: <%= text_color %>; font-size: 1.3em; cursor: pointer; font-weight: bold; line-height: 1;">&times;</button>
+    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: <%= text_color %>; font-size: 1.2em; cursor: pointer; font-weight: bold;">&times;</button>
   </div>
 <% end %>
 
-<!-- 2. BARRA DE SESIÓN DE USUARIO -->
-<div style="text-align: right; margin-bottom: 10px;">
-  Logged in as: <strong><%= current_user.email %></strong> | 
-  <%= button_to "Log out", destroy_user_session_path, method: :delete, style: "background: none; border: none; color: red; text-decoration: underline; cursor: pointer; display: inline; padding: 0;" %>
+<!-- 2. BARRA DE USUARIO -->
+<div style="text-align: right; margin-bottom: 15px; font-size: 0.9em; color: #5f6368;">
+  Conectado como: <strong style="color: #202124;"><%= current_user.email %></strong> | 
+  <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, style: "background: none; border: none; color: #d93025; text-decoration: underline; cursor: pointer; display: inline; padding: 0; font-size: 0.95em;" %>
 </div>
 
-<h1>Shopify - products management</h1>
+<h1 style="margin-top: 0; color: #202124;">Panel de Gestión de Productos</h1>
 
 <!-- 3. DASHBOARD DE MÉTRICAS -->
-<div style="display: flex; gap: 20px; margin: 20px 0;">
-  <!-- Tarjeta 1: Ventas Totales -->
-  <div style="flex: 1; padding: 15px; background-color: #e6f4ea; border: 1px solid #ceead6; border-radius: 8px;">
-    <span style="font-size: 0.9em; color: #137333; font-weight: bold;">💰 Ventas Totales</span>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin: 20px 0;">
+  <div style="padding: 15px; background-color: #e6f4ea; border: 1px solid #ceead6; border-radius: 8px;">
+    <span style="font-size: 0.85em; color: #137333; font-weight: bold; text-transform: uppercase;">Ventas Totales</span>
     <h2 style="margin: 5px 0 0 0; color: #137333;"><%= number_to_currency(@total_earnings) %></h2>
   </div>
 
-  <!-- Tarjeta 2: Valor en Stock -->
-  <div style="flex: 1; padding: 15px; background-color: #e8f0fe; border: 1px solid #d2e3fc; border-radius: 8px;">
-    <span style="font-size: 0.9em; color: #1a73e8; font-weight: bold;">📦 Valor en Inventario</span>
+  <div style="padding: 15px; background-color: #e8f0fe; border: 1px solid #d2e3fc; border-radius: 8px;">
+    <span style="font-size: 0.85em; color: #1a73e8; font-weight: bold; text-transform: uppercase;">Valor en Inventario</span>
     <h2 style="margin: 5px 0 0 0; color: #1a73e8;"><%= number_to_currency(@inventory_value) %></h2>
   </div>
 
-  <!-- Tarjeta 3: Productos Agotados -->
-  <div style="flex: 1; padding: 15px; background-color: #fce8e6; border: 1px solid #fad2cf; border-radius: 8px;">
-    <span style="font-size: 0.9em; color: #c5221f; font-weight: bold;">⚠️ Productos Agotados</span>
+  <div style="padding: 15px; background-color: #fce8e6; border: 1px solid #fad2cf; border-radius: 8px;">
+    <span style="font-size: 0.85em; color: #c5221f; font-weight: bold; text-transform: uppercase;">Sin Stock</span>
     <h2 style="margin: 5px 0 0 0; color: #c5221f;"><%= @out_of_stock_count %></h2>
   </div>
 </div>
 
-<hr>
+<hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
 
-<!-- 4. MENSAJES DE ERROR DE FORMULARIO -->
+<!-- 4. MENSAJES DE ERROR DE VALIDACIÓN -->
 <% if @product.errors.any? %>
-  <div style="color: red; background-color: #fdd; padding: 10px; border: 1px solid red; margin-bottom: 20px; border-radius: 5px;">
-    <h3>¡Please correct the errors!</h3>
-    <ul>
+  <div style="color: #c5221f; background-color: #fce8e6; padding: 12px 15px; border: 1px solid #fad2cf; margin-bottom: 20px; border-radius: 6px;">
+    <h4 style="margin: 0 0 5px 0;">Corrige los siguientes errores:</h4>
+    <ul style="margin: 0; padding-left: 20px;">
       <% @product.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
@@ -55,87 +52,120 @@
 <% end %>
 
 <!-- 5. FORMULARIO: AGREGAR NUEVO PRODUCTO -->
-<h2>Add a new product</h2>
-<%= form_with model: @product, local: true do |f| %>
-  <div>
-    <%= f.label :name, "Product name:" %><br>
-    <%= f.text_field :name, required: true %>
-  </div>
-  <br>
-  <div>
-    <%= f.label :price, "Price:" %><br>
-    <%= f.number_field :price, min: 0, step: 0.01, required: true %>
-  </div>
-  <br>
-  <%= f.submit "Add product" %>
-<% end %>
+<div style="background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+  <h3 style="margin-top: 0; margin-bottom: 15px;">Agregar Nuevo Producto</h3>
+  <%= form_with model: @product, local: true do |f| %>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      
+      <div style="flex: 2; min-width: 180px;">
+        <%= f.label :name, "Nombre:", style: "display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em;" %>
+        <%= f.text_field :name, placeholder: "Ej. Camisa Oxford", required: true, style: "width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" %>
+      </div>
+      
+      <div style="flex: 1.5; min-width: 160px;">
+        <%= f.label :category_id, "Categoría:", style: "display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em;" %>
+        <%= f.collection_select :category_id, @categories, :id, :name, { prompt: "-- Seleccionar Categoría --" }, { style: "width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: white;" } %>
+      </div>
 
-<hr>
+      <div style="flex: 1; min-width: 120px;">
+        <%= f.label :price, "Precio ($):", style: "display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em;" %>
+        <%= f.number_field :price, min: 0, step: 0.01, placeholder: "0.00", required: true, style: "width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" %>
+      </div>
 
-<!-- 6. BARRA DE BÚSQUEDA Y FILTRO -->
-<h2>Products list</h2>
-<div style="margin-bottom: 20px; background-color: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #e9ecef;">
-  <%= form_with url: root_path, method: :get, local: true, style: "display: flex; gap: 10px; align-items: center;" do %>
-    <%= text_field_tag :query, params[:query], placeholder: "Buscar producto por nombre...", style: "flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" %>
-    <%= submit_tag "Buscar", style: "background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;" %>
-    <% if params[:query].present? %>
-      <%= link_to "Limpiar filtro", root_path, style: "color: #6c757d; text-decoration: underline; font-size: 0.9em;" %>
+      <div>
+        <%= f.submit "Agregar Producto", style: "background-color: #28a745; color: white; border: none; padding: 9px 18px; border-radius: 4px; font-weight: bold; cursor: pointer;" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- 6. BARRA DE BÚSQUEDA Y FILTRADO -->
+<div style="margin-bottom: 20px; background-color: #ffffff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e0e0e0;">
+  <%= form_with url: root_path, method: :get, local: true, style: "display: flex; gap: 10px; align-items: center; flex-wrap: wrap;" do %>
+    <%= text_field_tag :query, params[:query], placeholder: "Buscar producto por nombre...", style: "flex: 2; min-width: 180px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" %>
+    
+    <%= select_tag :category_id, options_from_collection_for_select(@categories, :id, :name, params[:category_id]), prompt: "-- Todas las categorías --", style: "flex: 1; min-width: 160px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: white;" %>
+
+    <%= submit_tag "Filtrar", style: "background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer;" %>
+    
+    <% if params[:query].present? || params[:category_id].present? %>
+      <%= link_to "Limpiar filtros", root_path, style: "color: #6c757d; text-decoration: underline; font-size: 0.9em; margin-left: 5px;" %>
     <% end %>
   <% end %>
 </div>
 
-<!-- 7. TABLA DE INVENTARIO -->
-<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: left;">
+<!-- 7. ENCABEZADO DE TABLA Y EXPORTACIÓN CSV -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+  <h3 style="margin: 0;">Lista de Inventario</h3>
+  <%= link_to "Exportar a CSV (Excel)", products_path(format: :csv, query: params[:query], category_id: params[:category_id]), style: "background-color: #17a2b8; color: white; text-decoration: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; font-size: 0.9em; display: inline-block;" %>
+</div>
+
+<!-- 8. TABLA DE INVENTARIO -->
+<table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; border: 1px solid #e0e0e0; text-align: left;">
   <thead>
-    <tr style="background-color: #eee;">
-      <th>Name</th>
-      <th>Price</th>
+    <tr style="background-color: #f1f3f4; color: #202124;">
+      <th>Producto</th>
+      <th>Categoría</th>
+      <th>Precio</th>
       <th>Stock</th>
-      <th>Actions</th>
+      <th style="text-align: center;">Acciones</th>
     </tr>
   </thead>
   <tbody>
-    <% if @products.select(&:persisted?).any? %>
-      <% @products.select(&:persisted?).each do |product| %>
-        <tr>
-          <td><%= product.name %></td>
+    <% persisted_products = @products.select(&:persisted?) %>
+    <% if persisted_products.any? %>
+      <% persisted_products.each do |product| %>
+        <tr style="border-bottom: 1px solid #eee;">
+          <td><strong><%= product.name %></strong></td>
+          <td>
+            <% if product.category.present? %>
+              <span style="background-color: #e8f0fe; color: #1a73e8; padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold;">
+                <%= product.category.name %>
+              </span>
+            <% else %>
+              <span style="color: #9aa0a6; font-size: 0.85em;">Sin categoría</span>
+            <% end %>
+          </td>
           <td><%= number_to_currency(product.price) %></td>
           <td>
-            <% if product.stock > 0 %>
-              <%= product.stock %> items
+            <% if product.stock.to_i > 0 %>
+              <%= product.stock %> unidades
             <% else %>
-              <span style="color: red; font-weight: bold;">AGOTADO</span>
+              <span style="color: #d93025; font-weight: bold;">AGOTADO</span>
             <% end %>
           </td>
           <td>
-            <div style="display: flex; gap: 10px;">
-              <% if product.stock > 0 %>
-                <%= button_to "Vender 1", sell_product_path(product), method: :post, style: "color: white; background-color: #28a745; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
+            <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+              <%= link_to "Editar", edit_product_path(product), style: "color: white; background-color: #007bff; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.85em;" %>
+
+              <% if product.stock.to_i > 0 %>
+                <%= button_to "Vender 1", sell_product_path(product), method: :post, style: "color: white; background-color: #28a745; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em;" %>
               <% else %>
-                <button disabled style="color: #6c757d; background-color: #e2e3e5; border: none; padding: 5px 10px; border-radius: 3px; cursor: not-allowed;">Sin Stock</button>
+                <button disabled style="color: #80868b; background-color: #dadce0; border: none; padding: 5px 10px; border-radius: 4px; cursor: not-allowed; font-size: 0.85em;">Agotado</button>
               <% end %>
-              <%= button_to "delete", product_path(product), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete this product?" } }, style: "color: white; background-color: red; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" %>
+
+              <%= button_to "Eliminar", product_path(product), method: :delete, form: { data: { turbo_confirm: "¿Seguro que deseas eliminar este producto?" } }, style: "color: white; background-color: #dc3545; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em;" %>
             </div>
           </td>
         </tr>
       <% end %>
     <% else %>
       <tr>
-        <td colspan="4" style="padding: 15px; text-align: center; color: #6c757d;">
-          No se encontraron productos en el inventario.
+        <td colspan="5" style="padding: 20px; text-align: center; color: #5f6368;">
+          No se encontraron productos registrados en el inventario.
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<hr style="margin: 30px 0;">
+<hr style="border: 0; border-top: 1px solid #eee; margin: 35px 0 25px 0;">
 
-<!-- 8. TABLA DE HISTORIAL DE VENTAS RECIENTES -->
-<h2>🕒 Últimas Ventas Realizadas</h2>
-<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: left; margin-bottom: 30px;">
+<!-- 9. HISTORIAL DE VENTAS -->
+<h3 style="margin-bottom: 12px;">Últimas 10 Ventas</h3>
+<table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; border: 1px solid #e0e0e0; text-align: left; margin-bottom: 30px;">
   <thead>
-    <tr style="background-color: #e6f4ea;">
+    <tr style="background-color: #e6f4ea; color: #137333;">
       <th style="width: 40%;">Producto</th>
       <th style="width: 30%;">Precio de Venta</th>
       <th style="width: 30%;">Fecha y Hora</th>
@@ -144,18 +174,18 @@
   <tbody>
     <% if @recent_sales.any? %>
       <% @recent_sales.each do |sale| %>
-        <tr>
+        <tr style="border-bottom: 1px solid #eee;">
           <td><strong><%= sale.product&.name || "Producto eliminado" %></strong></td>
           <td style="color: #137333; font-weight: bold;"><%= number_to_currency(sale.price) %></td>
           <td style="color: #5f6368; font-size: 0.9em;">
-            <%= sale.created_at.strftime("%d/%m/%Y a las %H:%M hrs") %>
+            <%= sale.created_at&.strftime("%d/%m/%Y a las %H:%M hrs") || "Sin fecha" %>
           </td>
         </tr>
       <% end %>
     <% else %>
       <tr>
-        <td colspan="3" style="padding: 15px; text-align: center; color: #6c757d;">
-          Aún no has realizado ninguna venta. ¡Haz clic en "Vender 1" para registrar tu primera transacción!
+        <td colspan="3" style="padding: 15px; text-align: center; color: #5f6368;">
+          Aún no hay ventas registradas. Haz clic en "Vender 1" para generar tu primera venta.
         </td>
       </tr>
     <% end %>
